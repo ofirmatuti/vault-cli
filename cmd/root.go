@@ -1,34 +1,35 @@
 /*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
+	Copyright © 2022 Ofir Matuti and Segev matuti <ofirmatuti@gmail.com, segevmatuti1@gmail.com>
 */
 package cmd
 
 import (
+	"fmt"
 	"os"
+
+	cmdconfig "github.com/ofirmatuti/vt/cmd/config"
+	cmdlogin "github.com/ofirmatuti/vt/cmd/login"
 
 	"github.com/spf13/cobra"
 )
 
-
-
-// rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "vt",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+	Short: "vt helps navigating through vault secrets",
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+	Run: func(cmd *cobra.Command, args []string) {
+		isTtl, _ := cmd.Flags().GetBool("ttl")
+
+		if isTtl {
+			fmt.Println("Hey! i am vt -t !") //TODO add logic
+			os.Exit(0)
+		}
+
+		fmt.Println("hi! i am vt") //TODO
+
+	},
 }
 
-// Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	err := rootCmd.Execute()
 	if err != nil {
@@ -37,15 +38,7 @@ func Execute() {
 }
 
 func init() {
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.vt.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.Flags().BoolP("ttl", "t", false, "Prints ttl for vault okta authentication")
+	rootCmd.AddCommand(cmdconfig.NewCmdConfig())
+	rootCmd.AddCommand(cmdlogin.NewCmdLogin())
 }
-
-
