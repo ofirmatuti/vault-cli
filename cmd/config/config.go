@@ -8,13 +8,23 @@ import (
 )
 
 func NewCmdConfig() *cobra.Command {
-	cmd := &cobra.Command{
+	configCmd := &cobra.Command{
 		Use:   "config",
 		Short: "Modifies vtconfig file",
+		Long:  "config",
+		Run: func(cmd *cobra.Command, args []string) {
+			baseDir, _ := cmd.Flags().GetString("base-dir")
+			address, _ := cmd.Flags().GetString("address")
+			if baseDir != "" {
+				println("hey i am adding basedir to configuration!")
+			}
+			if address != "" {
+				println("hey i am adding address to configuration!")
+			}
+		},
 	}
 
-	cmd.AddCommand(NewCmdConfigSetBaseDir())
-	cmd.AddCommand(NewCmdConfigSetAddress())
-	cmd.AddCommand(NewCmdConfigList())
-	return cmd
+	configCmd.AddCommand(NewCmdGlobalConfig())
+
+	return configCmd
 }
