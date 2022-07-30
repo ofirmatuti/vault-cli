@@ -16,9 +16,8 @@ func ListDir(client *vault.Client, path string) {
 		log.Fatalf("unable to read secret: %v", err)
 	}
 
-	fmt.Println(secret)
 	//TODO: print as pretty json using MarhsalIdent - https://stackoverflow.com/questions/24512112/how-to-print-struct-variables-in-console
-	//for key, value := range secret.Data {
-	//	fmt.Printf("%v \t= %v\n", key, value)
-	//}
+	for key, value := range secret.Data {
+		fmt.Printf("%v \t= %v\n", key, value)
+	}
 }
