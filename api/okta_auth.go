@@ -2,22 +2,12 @@ package api
 
 import (
 	"fmt"
-	"log"
-
 	vault "github.com/hashicorp/vault/api"
 	oktaAuth "github.com/hashicorp/vault/builtin/credential/okta"
 	tokenHelper "github.com/hashicorp/vault/command/token"
 )
 
-func Login() {
-	config := vault.DefaultConfig()
-	config.Address = "https://vault.main2.staging.riskxint.com/"
-	//TODO: Make client available globally in the program. (Dependancy Injection)
-	client, err := vault.NewClient(config)
-	if err != nil {
-		log.Fatalf("unable to initialize Vault client: %v", err)
-	}
-
+func OktaLogin(client *vault.Client) (*vault.Client) {
 	okta := oktaAuth.CLIHandler{}
 	authConfig := make(map[string]string)
 	authConfig["username"] = "segev.matuti@riskified.com"
@@ -26,7 +16,7 @@ func Login() {
 	// Create token helper for storing token in local disk
 	myTokenHelper, _ := tokenHelper.NewInternalTokenHelper()
 	// Get cached token if exists
-	token, err := myTokenHelper.Get()
+	token, _ := myTokenHelper.Get()
 	if token == "" {
 		fmt.Println("no token, fetching from Okta")
 		// Token is not exists, fetch from Okta

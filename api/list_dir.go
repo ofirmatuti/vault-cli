@@ -2,39 +2,23 @@ package api
 
 import(
 	vault "github.com/hashicorp/vault/api"
-	oktaAuth "github.com/hashicorp/vault/builtin/credential/okta"
-	tokenHelper "github.com/hashicorp/vault/command/token"
-}
+	"fmt"
+	"context"
+	"log"
+)
 
 //TODO: recieves string (path), and returns KVSecret
 
-func ListDir() {
-	config := vault.DefaultConfig()
-	config.Address = "https://vault.main2.staging.riskxint.com/"
-	//TODO: Make client available globally in the program. (Dependancy Injection)
-	client, err := vault.NewClient(config)
+func ListDir(client *vault.Client, path string) {
+	fmt.Println(path)
+	secret, err := client.KVv2("secret").Get(context.Background(), path)
 	if err != nil {
-		log.Fatalf("unable to initialize Vault client: %v", err)
+		log.Fatalf("unable to read secret: %v", err)
 	}
 
-	okta := oktaAuth.CLIHandler{}
-	authConfig := make(map[string]string)
-	authConfig["username"] = "segev.matuti@riskified.com"
-	authConfig["mount"] = "okta"
-
-	// Create token helper for storing token in local disk
-	myTokenHelper, _ := tokenHelper.NewInternalTokenHelper()
-	// Get cached token if exists
-	token, err := myTokenHelper.Get()
-	if token == "" {
-		fmt.Println("no token, fetching from Okta")
-		// Token is not exists, fetch from Okta
-		oktaSecret, _ := okta.Auth(client, authConfig)
-		token = oktaSecret.Auth.ClientToken
-		myTokenHelper.Store(token)
-	}
-	// Set token for client
-	client.SetToken(token)
+	fmt.Println(secret)
+	//TODO: print as pretty json using MarhsalIdent - https://stackoverflow.com/questions/24512112/how-to-print-struct-variables-in-console
+	//for key, value := range secret.Data {
+	//	fmt.Printf("%v \t= %v\n", key, value)
+	//}
 }
-
-ListDir("secret/riski-services")
