@@ -36,4 +36,5 @@ func Login() {
 	}
 	// Set token for client
 	client.SetToken(token)
+	return client
 }
